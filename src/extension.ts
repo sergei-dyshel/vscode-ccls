@@ -1,4 +1,4 @@
-import {
+cnimport {
     CodeLens,
     commands,
     DecorationOptions,
