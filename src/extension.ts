@@ -615,6 +615,8 @@ export function activate(context: ExtensionContext) {
 
                       inheritanceHierarchyProvider.root = entry;
                       inheritanceHierarchyProvider.onDidChangeEmitter.fire();
+                    }).then(() => {
+                      return commands.executeCommand('ccls.callHierarchy.focus');
                     });
               })
         });
@@ -639,11 +641,12 @@ export function activate(context: ExtensionContext) {
         languageClient, derivedDark, derivedLight, baseDark, baseLight);
     window.registerTreeDataProvider(
         'ccls.callHierarchy', callHierarchyProvider);
-    commands.registerTextEditorCommand('ccls.callHierarchy', (editor) => {
+    commands.registerTextEditorCommand('ccls.callHierarchy', (editor):
+        Thenable<void> => {
       setContext('extension.ccls.callHierarchyVisible', true);
       let position = editor.selection.active;
       let uri = editor.document.uri;
-      languageClient
+      return languageClient
           .sendRequest('$ccls/call', {
             textDocument: {
               uri: uri.toString(),
@@ -658,6 +661,8 @@ export function activate(context: ExtensionContext) {
           .then((callNode: CallHierarchyNode) => {
             callHierarchyProvider.root = callNode;
             callHierarchyProvider.onDidChangeEmitter.fire();
+          }).then(() => {
+            return commands.executeCommand('ccls.callHierarchy.focus');
           });
     });
     commands.registerCommand('ccls.closeCallHierarchy', (e) => {
