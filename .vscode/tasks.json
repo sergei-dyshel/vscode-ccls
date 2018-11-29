@@ -15,6 +15,38 @@
                 "kind": "build",
                 "isDefault": true
             }
-        }
+        },
+        {
+            "label": "build VSIX",
+            "type": "shell",
+            "command": "python build.py",
+            "group": "build",
+            "presentation": {
+                    "echo": true,
+                    "reveal": "silent",
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": true
+            },
+            "problemMatcher": []
+    },
+    {
+            "label": "install VSIX",
+            "type": "shell",
+            "command": "code --install-extension out/ccls.vsix",
+            "group": "build",
+            "dependsOn": [
+                    "build VSIX"
+            ],
+            "presentation": {
+                    "echo": true,
+                    "reveal": "silent",
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": true
+            },
+            "problemMatcher": []
+    }
+
     ]
 }

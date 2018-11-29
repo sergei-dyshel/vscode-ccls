@@ -238,20 +238,10 @@ export function activate(context: ExtensionContext) {
 
     let args = clientConfig['launchArgs'];
 
-    let env: any = {};
-    let kToForward = [
-      'ProgramData',
-      'PATH',
-      'CPATH',
-      'LIBRARY_PATH',
-    ];
-    for (let e of kToForward)
-      env[e] = process.env[e];
-
     let serverOptions: ServerOptions = {
       command: clientConfig.launchCommand,
       args: args,
-      options: {env: env}
+      options: {env: process.env }
     };
     console.log(
         `Starting ${serverOptions.command} in ${serverOptions.options.cwd}`);
@@ -934,4 +924,6 @@ export function activate(context: ExtensionContext) {
     }
     commands.registerCommand('ccls.navigate', makeNavigateHandler('$ccls/navigate'))
   })();
+
+  return { languageClient: languageClient}
 }
