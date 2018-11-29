@@ -1,6 +1,6 @@
 import {StatusBarItem, window, WorkspaceConfiguration} from 'vscode';
 import {Message} from 'vscode-jsonrpc';
-import {CloseAction, ErrorAction, ErrorHandler} from 'vscode-languageclient';
+import {CloseAction, ErrorAction, ErrorHandler, VersionedTextDocumentIdentifier} from 'vscode-languageclient';
 
 export class CclsErrorHandler implements ErrorHandler {
   constructor(

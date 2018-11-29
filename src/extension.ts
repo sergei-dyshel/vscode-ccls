@@ -267,20 +267,10 @@ export async function activate(context: ExtensionContext) {
 
     const args = clientConfig.launchArgs;
 
-    const env: any = {};
-    const kToForward = [
-      'ProgramData',
-      'PATH',
-      'CPATH',
-      'LIBRARY_PATH',
-    ];
-    for (const e of kToForward)
-      env[e] = process.env[e];
-
     const serverOptions: ServerOptions = {
       args,
       command: clientConfig.launchCommand,
-      options: { env }
+      options: { env: process.env }
     };
 
     // Inline code lens.
@@ -967,4 +957,6 @@ export async function activate(context: ExtensionContext) {
     }
     commands.registerCommand('ccls.navigate', makeNavigateHandler('$ccls/navigate'));
   }
+
+  return { languageClient };
 }

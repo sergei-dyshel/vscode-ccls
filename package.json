@@ -3,11 +3,11 @@
   "description": "C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlighting",
   "author": "ccls-project",
   "license": "MIT",
-  "version": "0.1.17",
+  "version": "99.1.14",
   "publisher": "ccls-project",
   "preview": true,
   "engines": {
-    "vscode": "^1.25.0"
+    "vscode": "^1.30.0"
   },
   "categories": [
     "Programming Languages"
