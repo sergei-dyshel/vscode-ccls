@@ -61,4 +61,6 @@ export class GlobalContext implements Disposable {
     this.chan.appendLine(`Restarting ccls, lazy mode ${lazy ? 'on' : 'off'}`);
     return this.startServer();
   }
+
+  get server() { return this._server; }
 }

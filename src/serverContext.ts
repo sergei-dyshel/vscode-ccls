@@ -197,6 +197,8 @@ export class ServerContext implements Disposable {
     id: undefined,
   };
 
+  get languageClient() { return this.client; }
+
   public constructor(
     public readonly cwd: string,
     lazyMode: boolean = false
@@ -241,6 +243,10 @@ export class ServerContext implements Disposable {
     this._dispose.push(commands.registerCommand('ccls._autoImplement', this.autoImplementCmd, this));
     this._dispose.push(commands.registerCommand('ccls._insertInclude', this.insertIncludeCmd, this));
 
+    const role = (1 << 1) + (1 << 4 ) + (1 << 7);
+    this._dispose.push(commands.registerCommand(
+        'ccls.showAssignments',
+        this.makeRefHandler('textDocument/references', {role}, true)));
     const config = workspace.getConfiguration('ccls');
     if (config.get('misc.showInactiveRegions')) {
       const inact = new InactiveRegionsProvider(this.client);
@@ -435,7 +441,10 @@ export class ServerContext implements Disposable {
     const args = this.cliConfig.launchArgs;
 
     const serverOptions: ServerOptions = async (): Promise<cp.ChildProcess> => {
-      const child = cp.spawn(this.cliConfig.launchCommand, args);
+      const opts: cp.SpawnOptions = {
+        cwd: this.cwd,
+      };
+      const child = cp.spawn(this.cliConfig.launchCommand, args, opts);
       this.clientPid = child.pid;
       return child;
     };

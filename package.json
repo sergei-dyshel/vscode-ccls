@@ -3,10 +3,11 @@
   "description": "C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlight",
   "author": "ccls-project",
   "license": "MIT",
-  "version": "0.1.28",
+  "version": "0.1.23",
   "publisher": "ccls-project",
   "scripts": {
     "vscode:prepublish": "npm run lint && npm run compile",
+    "watch": "npx tsc -watch -p ./",
     "compile": "npx tsc -p ./",
     "update-vscode": "node ./node_modules/vscode/bin/install",
     "postinstall": "node ./node_modules/vscode/bin/install",
@@ -241,6 +242,11 @@
         "title": "Show Base",
         "category": "ccls",
         "command": "ccls.base"
+      },
+      {
+        "title": "Show assignments",
+        "category": "ccls",
+        "command": "ccls.showAssignments"
       },
       {
         "title": "Go to Tree View Entry",
