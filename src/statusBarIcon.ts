@@ -40,6 +40,8 @@ export class StatusBarIconProvider implements Disposable {
     this.icon.dispose();
   }
 
+  public inError() { return this.wasError; }
+
   private async updateStatus() {
     let info: CclsInfoResponse;
     try {
@@ -52,14 +54,18 @@ export class StatusBarIconProvider implements Disposable {
       this.icon.text = "ccls: error";
       this.icon.color = "red";
       this.icon.tooltip = "Failed to perform info request: " + (e as Error).message;
-      unwrap(cclsChan).show();
       return;
     }
     const lastIdle = info.pipeline.lastIdle || 0;
     const completed = info.pipeline.completed || 0;
     const enqueued = info.pipeline.enqueued || 0;
-    this.icon.color = "";
-    this.icon.text = `ccls: ${completed}/${enqueued} jobs`;
+    if (enqueued === completed) {
+      this.icon.color = "";
+      this.icon.text = 'ccls: idle';
+    } else {
+      this.icon.color = "yellow";
+      this.icon.text = `ccls: ${enqueued - completed} jobs`;
+    }
     this.icon.tooltip = `${info.db.files} files,
 ${info.db.funcs} functions,
 ${info.db.types} types,

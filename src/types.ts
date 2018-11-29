@@ -24,4 +24,5 @@ export interface IHierarchyNode {
   location: ls.Location;
   numChildren: number;
   children: IHierarchyNode[];
+  useRange: ls.Range;
 }

@@ -1,5 +1,6 @@
 {
-  "name": "ccls",
+  "name": "ccls-qcfg",
+  "displayName": "ccls (qcfg)",
   "description": "C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlight",
   "author": "ccls-project",
   "license": "MIT",
@@ -7,19 +8,19 @@
   "publisher": "ccls-project",
   "scripts": {
     "vscode:prepublish": "npm run lint && npm run compile",
+    "watch": "npx tsc -watch -p ./",
     "compile": "npx tsc -p ./",
-    "update-vscode": "node ./node_modules/vscode/bin/install",
-    "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "node ./node_modules/vscode/bin/test",
     "lint": "npx tslint -p ./"
   },
   "devDependencies": {
     "@types/node": "^14.0.14",
+    "@types/vscode": "^1.41.0",
     "@types/ws": "^7.2.6",
     "tslint": "^6.1.2",
     "typescript": "^3.9.6",
     "vsce": "^1.77.0",
-    "vscode": "^1.1.37"
+    "vscode-test": "^1.2.0"
   },
   "dependencies": {
     "vscode-languageclient": "^6.1.3",
@@ -30,7 +31,7 @@
     "url": "https://github.com/MaskRay/vscode-ccls"
   },
   "engines": {
-    "vscode": "^1.42.0"
+    "vscode": "^1.41.0"
   },
   "categories": [
     "Programming Languages",
@@ -241,6 +242,11 @@
         "title": "Show Base",
         "category": "ccls",
         "command": "ccls.base"
+      },
+      {
+        "title": "Show assignments",
+        "category": "ccls",
+        "command": "ccls.showAssignments"
       },
       {
         "title": "Go to Tree View Entry",

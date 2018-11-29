@@ -79,6 +79,7 @@ export class InheritanceHierarchyProvider extends Hierarchy<InheritanceHierarchy
         location: parentEntry.location,
         name: '[[Base]]',
         numChildren: parentEntry.children.length,
+        useRange: parentEntry.location.range,
         wantsDerived: false,
       };
       InheritanceHierarchySetWantsDerived(
