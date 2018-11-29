@@ -1,4 +1,4 @@
-cnimport {
+import {
     CodeLens,
     commands,
     DecorationOptions,
@@ -8,6 +8,7 @@ cnimport {
     Position,
     QuickPickItem,
     Range,
+    StatusBarAlignment,
     TextDocument,
     TextEditor,
     TextEditorDecorationType,
@@ -104,6 +105,12 @@ interface SemanticSymbol {
   readonly isTypeMember: boolean;
   readonly storage: StorageClass;
   readonly lsRanges: Range[];
+}
+
+interface CclsInfo {
+  pipeline: {
+    pendingIndexRequests: number;
+  };
 }
 
 function getClientConfig(context: ExtensionContext): ClientConfig {
@@ -371,6 +378,11 @@ export async function activate(context: ExtensionContext) {
       return [];
     }
 
+    const status = window.createStatusBarItem(StatusBarAlignment.Right);
+    status.text = 'ccls: loading';
+    status.color = 'yellow';
+    status.show();
+
     // Options to control the language client
     const clientOptions: LanguageClientOptions = {
       diagnosticCollectionName: 'ccls',
@@ -379,7 +391,7 @@ export async function activate(context: ExtensionContext) {
       // 	configurationSection: 'ccls',
       // 	fileEvents: workspace.createFileSystemWatcher('**/.cc')
       // },
-      errorHandler: new CclsErrorHandler(workspace.getConfiguration('ccls')),
+      errorHandler: new CclsErrorHandler(workspace.getConfiguration('ccls'), status),
       initializationFailedHandler: (e) => {
         console.log(e);
         return false;
@@ -394,9 +406,29 @@ export async function activate(context: ExtensionContext) {
     const langClient =
         new LanguageClient('ccls', 'ccls', serverOptions, clientOptions);
     const command = serverOptions.command;
-    langClient.onReady().catch((e) => {
-      window.showErrorMessage(`Failed to start ccls with command "${command}".`);
-    });
+    langClient.onReady().then(
+        () => {
+          status.text = 'ccls: loaded';
+          setInterval(() => {
+            langClient.sendRequest('$ccls/info').then((res) => {
+              const info = res as CclsInfo;
+              const numRequests = info.pipeline.pendingIndexRequests;
+              if (numRequests > 0) {
+                status.text = 'ccls: ' + numRequests;
+                status.color = 'yellow';
+              } else {
+                status.text = 'ccls: idle';
+                status.color = 'white';
+              }
+            });
+          }, 1000);
+        },
+        (e) => {
+          status.text = 'ccls: failed';
+          status.color = 'red';
+          window.showErrorMessage(
+              `Failed to start ccls with command "${command}".`);
+        });
     context.subscriptions.push(langClient.start());
 
     return langClient;
