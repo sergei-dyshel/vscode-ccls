@@ -344,6 +344,11 @@ export function activate(context: ExtensionContext) {
           });
     };
 
+    let status = window.createStatusBarItem(StatusBarAlignment.Right)
+    status.text = 'ccls: loading';
+    status.color = 'yellow';
+    status.show();
+
     // Options to control the language client
     let clientOptions: LanguageClientOptions = {
       documentSelector: ['c', 'cpp', 'objective-c', 'objective-cpp'],
@@ -360,17 +365,36 @@ export function activate(context: ExtensionContext) {
         console.log(e);
         return false;
       },
-      errorHandler: new cclsErrorHandler(workspace.getConfiguration('ccls'))
+      errorHandler:
+          new cclsErrorHandler(workspace.getConfiguration('ccls'), status)
     }
 
     // Create the language client and start the client.
     let languageClient =
         new LanguageClient('ccls', 'ccls', serverOptions, clientOptions);
     let command = serverOptions.command;
-    languageClient.onReady().catch(e => {
-      window.showErrorMessage(
-          `Failed to start ccls with command "${command}".`);
-    });
+    languageClient.onReady().then(
+        () => {
+          status.text = 'ccls: loaded';
+          setInterval(() => {
+            languageClient.sendRequest('$ccls/info').then(res => {
+              let numRequests = res['pipeline']['pendingIndexRequests'];
+              if (numRequests > 0) {
+                status.text = 'ccls: ' + numRequests;
+                status.color = 'yellow';
+              } else {
+                status.text = 'ccls: idle';
+                status.color = 'white';
+              }
+            })
+          }, 1000);
+        },
+        e => {
+          status.text = 'ccls: failed'
+          status.color = 'red';
+          window.showErrorMessage(
+              `Failed to start ccls with command "${command}".`);
+        });
     context.subscriptions.push(languageClient.start());
 
     return languageClient;
