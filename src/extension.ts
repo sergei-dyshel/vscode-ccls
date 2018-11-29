@@ -7,4 +7,8 @@ export async function activate(context: ExtensionContext) {
   const ctx = new GlobalContext();
   await ctx.startServer();
   context.subscriptions.push(ctx);
+  return {
+    isRunning: () => !ctx.server.inError(),
+    languageClient: ctx.server.languageClient,
+  };
 }

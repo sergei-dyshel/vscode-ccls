@@ -7,6 +7,7 @@ import {
   DecorationRangeBehavior,
   DecorationRenderOptions,
   Disposable,
+  languages,
   Position,
   QuickPickItem,
   Range,
@@ -30,7 +31,7 @@ import * as ls from "vscode-languageserver-types";
 import * as WebSocket from 'ws';
 import { CclsErrorHandler } from "./cclsErrorHandler";
 import { cclsChan, logChan } from './globalContext';
-import { CallHierarchyProvider } from "./hierarchies/callHierarchy";
+import { CallHierarchyProvider, NewCallHierarchyProvider } from "./hierarchies/callHierarchy";
 import { InheritanceHierarchyProvider } from "./hierarchies/inheritanceHierarchy";
 import { MemberHierarchyProvider } from "./hierarchies/memberHierarchy";
 import { InactiveRegionsProvider } from "./inactiveRegions";
@@ -196,6 +197,9 @@ export class ServerContext implements Disposable {
     clockTime: 0,
     id: undefined,
   };
+  private statusBarIcon: StatusBarIconProvider|undefined = undefined;
+
+  get languageClient() { return this.client; }
 
   public constructor(
     public readonly cwd: string,
@@ -241,6 +245,10 @@ export class ServerContext implements Disposable {
     this._dispose.push(commands.registerCommand('ccls._autoImplement', this.autoImplementCmd, this));
     this._dispose.push(commands.registerCommand('ccls._insertInclude', this.insertIncludeCmd, this));
 
+    const role = (1 << 1) + (1 << 4 ) + (1 << 7);
+    this._dispose.push(commands.registerCommand(
+        'ccls.showAssignments',
+        this.makeRefHandler('textDocument/references', {role}, true)));
     const config = workspace.getConfiguration('ccls');
     if (config.get('misc.showInactiveRegions')) {
       const inact = new InactiveRegionsProvider(this.client);
@@ -287,12 +295,17 @@ export class ServerContext implements Disposable {
 
     const interval = this.cliConfig.statusUpdateInterval;
     if (interval) {
-      const statusBarIconProvider = new StatusBarIconProvider(this.client, interval);
-      this._dispose.push(statusBarIconProvider);
+      this.statusBarIcon = new StatusBarIconProvider(this.client, interval);
+      this._dispose.push(this.statusBarIcon);
     }
 
     this._dispose.push(commands.registerCommand("ccls.reload", this.reloadIndex, this));
+
+    this._dispose.push(languages.registerCallHierarchyProvider(
+        ['c', 'cpp'], new NewCallHierarchyProvider(this.client)));
   }
+
+  public inError() { return this.statusBarIcon ? this.statusBarIcon.inError() : false; }
 
   public async stop() {
     const pid = unwrap(this.clientPid);
@@ -435,7 +448,10 @@ export class ServerContext implements Disposable {
     const args = this.cliConfig.launchArgs;
 
     const serverOptions: ServerOptions = async (): Promise<cp.ChildProcess> => {
-      const child = cp.spawn(this.cliConfig.launchCommand, args);
+      const opts: cp.SpawnOptions = {
+        cwd: this.cwd,
+      };
+      const child = cp.spawn(this.cliConfig.launchCommand, args, opts);
       this.clientPid = child.pid;
       return child;
     };
