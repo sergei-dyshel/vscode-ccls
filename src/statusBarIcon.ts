@@ -53,8 +53,15 @@ export class StatusBarIconProvider implements Disposable {
       unwrap(cclsChan).show();
       return;
     }
-    this.icon.color = "";
-    this.icon.text = `ccls: ${info.pipeline.pendingIndexRequests || 0} jobs`;
+
+    const pendingReqs = info.pipeline.pendingIndexRequests;
+    if (pendingReqs) {
+      this.icon.color = "yellow";
+      this.icon.text = `ccls: ${pendingReqs} jobs`;
+    } else {
+      this.icon.color = "";
+      this.icon.text = `ccls: idle`;
+    }
     this.icon.tooltip = dedent`${info.db.files} files,
       ${info.db.funcs} functions,
       ${info.db.types} types,

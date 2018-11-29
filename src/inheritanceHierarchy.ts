@@ -150,7 +150,8 @@ export class InheritanceHierarchyProvider implements
 
     this.root = entry;
     this.onDidChangeEmitter.fire();
-    commands.executeCommand("workbench.view.explorer");
+    await commands.executeCommand("workbench.view.explorer");
+    await commands.executeCommand('ccls.inheritanceHierarchy.focus');
   }
 
   private async closeInheritanceHierarchy() {

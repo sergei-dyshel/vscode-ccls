@@ -3,10 +3,11 @@
   "description": "C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlighting",
   "author": "ccls-project",
   "license": "MIT",
-  "version": "0.1.20",
+  "version": "99.1.14",
   "publisher": "ccls-project",
   "scripts": {
     "vscode:prepublish": "npm run lint && npm run compile",
+    "watch": "npx tsc -watch -p ./",
     "compile": "npx tsc -p ./",
     "update-vscode": "node ./node_modules/vscode/bin/install",
     "postinstall": "node ./node_modules/vscode/bin/install",
@@ -18,7 +19,7 @@
     "typescript": "^2.9.2",
     "tslint": "^5.11.0",
     "vsce": "^1.54.0",
-    "vscode": "^1.1.26"
+    "vscode": "^1.1.28"
   },
   "dependencies": {
     "vscode-languageclient": "^5.2.1"

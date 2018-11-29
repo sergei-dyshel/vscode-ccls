@@ -146,7 +146,8 @@ export class CallHierarchyProvider implements TreeDataProvider<CallHierarchyNode
     );
     this.root = callNode;
     this.onDidChangeEmitter.fire();
-    commands.executeCommand("workbench.view.explorer");
+    await commands.executeCommand("workbench.view.explorer");
+    await commands.executeCommand('ccls.callHierarchy.focus');
   }
 
   private async closeCallHierarchy() {
