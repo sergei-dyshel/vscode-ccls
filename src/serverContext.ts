@@ -196,6 +196,7 @@ export class ServerContext implements Disposable {
     clockTime: 0,
     id: undefined,
   };
+  private statusBarIcon: StatusBarIconProvider|undefined = undefined;
 
   get languageClient() { return this.client; }
 
@@ -293,12 +294,14 @@ export class ServerContext implements Disposable {
 
     const interval = this.cliConfig.statusUpdateInterval;
     if (interval) {
-      const statusBarIconProvider = new StatusBarIconProvider(this.client, interval);
-      this._dispose.push(statusBarIconProvider);
+      this.statusBarIcon = new StatusBarIconProvider(this.client, interval);
+      this._dispose.push(this.statusBarIcon);
     }
 
     this._dispose.push(commands.registerCommand("ccls.reload", this.reloadIndex, this));
   }
+
+  public inError() { return this.statusBarIcon ? this.statusBarIcon.inError() : false; }
 
   public async stop() {
     const pid = unwrap(this.clientPid);

@@ -38,6 +38,8 @@ export class StatusBarIconProvider implements Disposable {
     this.icon.dispose();
   }
 
+  public inError() { return this.wasError; }
+
   private async updateStatus() {
     let info: CclsInfoResponse;
     try {
