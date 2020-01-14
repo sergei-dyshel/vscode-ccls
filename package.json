@@ -9,18 +9,17 @@
     "vscode:prepublish": "npm run lint && npm run compile",
     "watch": "npx tsc -watch -p ./",
     "compile": "npx tsc -p ./",
-    "update-vscode": "node ./node_modules/vscode/bin/install",
-    "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "node ./node_modules/vscode/bin/test",
     "lint": "npx tslint -p ./"
   },
   "devDependencies": {
     "@types/node": "^9.6.52",
+    "@types/vscode": "^1.41.0",
     "@types/ws": "^6.0.3",
     "tslint": "^5.20.0",
     "typescript": "^2.9.2",
     "vsce": "^1.67.1",
-    "vscode": "^1.1.36"
+    "vscode-test": "^1.2.0"
   },
   "dependencies": {
     "vscode-languageclient": "^5.2.1",
@@ -31,7 +30,7 @@
     "url": "https://github.com/MaskRay/vscode-ccls"
   },
   "engines": {
-    "vscode": "^1.36.0"
+    "vscode": "^1.41.0"
   },
   "categories": [
     "Programming Languages",
