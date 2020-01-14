@@ -7,6 +7,7 @@ import {
   DecorationRangeBehavior,
   DecorationRenderOptions,
   Disposable,
+  languages,
   Position,
   QuickPickItem,
   Range,
@@ -30,7 +31,7 @@ import * as ls from "vscode-languageserver-types";
 import * as WebSocket from 'ws';
 import { CclsErrorHandler } from "./cclsErrorHandler";
 import { cclsChan, logChan } from './globalContext';
-import { CallHierarchyProvider } from "./hierarchies/callHierarchy";
+import { CallHierarchyProvider, NewCallHierarchyProvider } from "./hierarchies/callHierarchy";
 import { InheritanceHierarchyProvider } from "./hierarchies/inheritanceHierarchy";
 import { MemberHierarchyProvider } from "./hierarchies/memberHierarchy";
 import { InactiveRegionsProvider } from "./inactiveRegions";
@@ -299,6 +300,9 @@ export class ServerContext implements Disposable {
     }
 
     this._dispose.push(commands.registerCommand("ccls.reload", this.reloadIndex, this));
+
+    this._dispose.push(languages.registerCallHierarchyProvider(
+        ['c', 'cpp'], new NewCallHierarchyProvider(this.client)));
   }
 
   public inError() { return this.statusBarIcon ? this.statusBarIcon.inError() : false; }
