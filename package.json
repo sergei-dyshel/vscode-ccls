@@ -1,9 +1,10 @@
 {
-  "name": "ccls",
+  "name": "ccls-qcfg",
+  "displayName": "ccls (qcfg)",
   "description": "C/C++/ObjC language server supporting cross references, hierarchies, completion and semantic highlight",
   "author": "ccls-project",
   "license": "MIT",
-  "version": "99.1.23",
+  "version": "0.1.28",
   "publisher": "ccls-project",
   "scripts": {
     "vscode:prepublish": "npm run lint && npm run compile",
@@ -17,12 +18,12 @@
     "@types/vscode": "^1.41.0",
     "@types/ws": "^6.0.3",
     "tslint": "^5.20.0",
-    "typescript": "^2.9.2",
+    "typescript": "^3.7.4",
     "vsce": "^1.67.1",
     "vscode-test": "^1.2.0"
   },
   "dependencies": {
-    "vscode-languageclient": "^5.2.1",
+    "vscode-languageclient": "^6.0.0",
     "ws": "^6.2.1"
   },
   "repository": {
